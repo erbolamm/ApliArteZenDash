@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApliArte ZenDash — El panel definitivo de optimización para Windows</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+       BASE & RESET
+       ============================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #030a12;
+            --bg-card: rgba(4, 100, 172, 0.04);
+            --border: rgba(85, 205, 245, 0.15);
+            --text: #f4f4f5;
+            --text-dim: rgba(255, 255, 255, 0.55);
+            --gold: #55CDF5; /* Replaced Gold with Cyan */
+            --gold-light: #AEE2F9;
+            --red: #e94560;
+            --red-bg: rgba(233, 69, 96, 0.12);
+            --blue: #0464AC;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+            --section-height: 100dvh;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+       SCROLL SNAP SECTIONS
+       ============================================ */
+        .section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            min-height: var(--section-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            position: relative;
+        }
+
+        .section-inner {
+            max-width: 800px;
+            width: 100%;
+            animation: fadeSlideIn 0.6s ease-out both;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+       NAV INDICATOR (lateral dots)
+       ============================================ */
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-dots a {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(85, 205, 245, 0.15);
+            border: 1px solid rgba(85, 205, 245, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .nav-dots a:hover,
+        .nav-dots a.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            transform: scale(1.4);
+            box-shadow: 0 0 12px rgba(85, 205, 245, 0.5);
+        }
+
+        /* ============================================
+       SECTION 1: HERO
+       ============================================ */
+        .hero {
+            background: radial-gradient(ellipse at 50% 0%, rgba(4, 100, 172, 0.15) 0%, transparent 60%), var(--bg);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            margin-bottom: 24px;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(85, 205, 245, 0.3);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, var(--gold-light) 40%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 500px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            font-size: 13px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint svg { width: 24px; height: 24px; stroke: var(--gold); }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* ============================================
+       SECTION 2: WARNING
+       ============================================ */
+        .warning-section { background: radial-gradient(ellipse at 50% 50%, rgba(233, 69, 96, 0.08) 0%, transparent 60%), var(--bg); }
+        .warning-box {
+            background: var(--red-bg);
+            border: 2px solid var(--red);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+        .warning-icon { font-size: 4rem; margin-bottom: 20px; display: block; }
+        .warning-box h2 {
+            color: var(--red);
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .warning-box p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .warning-box strong { color: #fff; }
+        .warning-box .highlight-red { color: var(--red); font-weight: 700; text-transform: uppercase; }
+
+        .tip-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(85, 205, 245, 0.08); /* changed to cyan */
+            border: 1px solid rgba(85, 205, 245, 0.3);
+            border-radius: 12px;
+            text-align: left;
+        }
+        .tip-box h3 {
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .tip-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .tip-box li { color: rgba(255, 255, 255, 0.6); font-size: 14px; padding-left: 20px; position: relative; }
+        .tip-box li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+        /* ============================================
+       SECTION 3: QUÉ PUEDES CONSEGUIR
+       ============================================ */
+        .features-section { background: radial-gradient(ellipse at 50% 30%, rgba(4, 100, 172, 0.1) 0%, transparent 60%), var(--bg); }
+        .section-label { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+        .section-title { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 40px; line-height: 1.2; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.3s ease; }
+        .feature-card:hover { border-color: rgba(85, 205, 245, 0.4); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); }
+        .feature-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+        /* ============================================
+       SECTION 4: ELIGE TU MODO
+       ============================================ */
+        .modes-section { background: radial-gradient(ellipse at 50% 50%, rgba(85, 205, 245, 0.08) 0%, transparent 60%), var(--bg); }
+        .mode-cards { display: flex; flex-direction: column; gap: 16px; }
+        .mode-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .mode-card:hover { border-color: rgba(85, 205, 245, 0.3); }
+
+        .mode-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+        .mode-emoji { font-size: 1.8rem; }
+        .mode-name { font-size: 1.2rem; font-weight: 700; }
+        .mode-difficulty { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .diff-easy { background: rgba(52, 211, 153, 0.15); color: var(--green); }
+        .diff-medium { background: rgba(251, 191, 36, 0.15); color: #FbbF24; }
+        .diff-advanced { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
+        .mode-desc { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
+        .mode-includes { display: flex; flex-wrap: wrap; gap: 8px; }
+        .mode-tag { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: rgba(255, 255, 255, 0.5); }
+
+        /* ============================================
+       SECTION 5: TECH STACK
+       ============================================ */
+        .stack-section { background: linear-gradient(to bottom, var(--bg), #061120); }
+        .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-top: 40px; }
+        .stack-item { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 20px; border-radius: 12px; text-align: center; }
+        .stack-item h4 { color: var(--gold); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stack-item p { font-weight: 700; font-size: 15px; }
+
+        /* ============================================
+       SECTION 6: DONACIONES / CONNECT
+       ============================================ */
+        .connect-section { background: radial-gradient(ellipse at 50% 50%, rgba(4, 100, 172, 0.2) 0%, transparent 60%), var(--bg); text-align: center; }
+        .btn-deploy { display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--gold), var(--blue)); color: #fff; font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; margin-top: 30px; text-decoration: none; }
+        .btn-deploy:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(85, 205, 245, 0.4); }
+
+        .donate-box {
+            margin-top: 40px;
+            background: #091018;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .donate-box a {
+            display: inline-block;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            width: 250px;
+            transition: all 0.2s;
+        }
+
+        .donate-box a:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* ============================================
+       FOOTER
+       ============================================ */
+        .footer { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
+        .footer a { color: var(--gold); text-decoration: none; font-weight: bold;}
+
+        /* ============================================
+       RESPONSIVE
+       ============================================ */
+        @media (max-width: 600px) {
+            .section { padding: 30px 16px; }
+            .warning-box { padding: 24px; }
+            .nav-dots { right: 10px; gap: 8px; }
+            .nav-dots a { width: 8px; height: 8px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAV DOTS -->
+    <nav class="nav-dots" id="navDots">
+        <a href="#hero" title="Inicio" class="active"></a>
+        <a href="#warning" title="Atención"></a>
+        <a href="#features" title="Posibilidades"></a>
+        <a href="#modes" title="Modos Rápidos"></a>
+        <a href="#stack" title="Arquitectura"></a>
+        <a href="#connect" title="Descargas"></a>
+    </nav>
+
+    <!-- SECTION 1: HERO -->
+    <section class="section hero" id="hero">
+        <div class="section-inner">
+            <span class="hero-badge">ApliArte · Windows OS</span>
+            <div class="logo-container">
+                <img src="assets/logo.webp" alt="ApliArte ZenDash Logo">
+            </div>
+            <h1>ZenDash<br>El panel definitivo</h1>
+            <p>Optimiza tu entorno para streaming y gaming. Libera memoria, cambia configuraciones y actualiza tu software en un segundo y sin instalación.</p>
+            <div class="scroll-hint">
+                <span>Desliza para empezar</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: WARNING -->
+    <section class="section warning-section" id="warning">
+        <div class="section-inner">
+            <div class="warning-box">
+                <span class="warning-icon">⚡</span>
+                <h2>ATENCIÓN: CERRARÁ APLICACIONES</h2>
+                <p>
+                    Esta herramienta está diseñada para exprimir cada gota de rendimiento cerrando de golpe
+                    <span class="highlight-red">procesos en segundo plano</span>.
+                    <br><br>
+                    <strong>Si vas a entrar en modo Streaming o Gaming,</strong>
+                    asegúrate de que no estás usando activamente Dropbox, Chrome o aplicaciones que requieran sincronización en la nube en ese momento.
+                </p>
+                <div class="tip-box">
+                    <h3>✅ Lo recomendado</h3>
+                    <ul>
+                        <li>Comprueba que todo trabajo esté guardado antes de hacer "click".</li>
+                        <li>Ejecuta el .hta haciendo doble click sin necesidad de instalar.</li>
+                        <li>Verifica tu memoria RAM libre arriba a la izquierda.</li>
+                        <li>Usa el botón "Restaurar" cuando termines tu sesión de juego o streaming.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: QUÉ PUEDES CONSEGUIR -->
+    <section class="section features-section" id="features">
+        <div class="section-inner">
+            <div class="section-label">¿Qué ofrece ZenDash?</div>
+            <h2 class="section-title">Automatizaciones agresivas y eficaces</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🎮</span>
+                    <h3>Modo Gaming</h3>
+                    <p>Cierra navegadores y sube prioridad de GPU sacrificando procesos de Windows como SysMain.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📹</span>
+                    <h3>Modo Streaming</h3>
+                    <p>Suspende temporalmente sincronizaciones (OneDrive, Dropbox) dando espacio total a OBS/Twitch.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🧹</span>
+                    <h3>Limpieza Segura</h3>
+                    <p>Vacía tu de forma silenciosa %TEMP%, C:\Windows\Temp y la papelera de reciclaje.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3>Flush DNS</h3>
+                    <p>Reactiva y limpia cachés y Winsock para que el ping en juegos multijugador vuelva a su estado óptimo.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <h3>WinGet Update</h3>
+                    <p>No instales actualizadores. Con un botón llama a `winget` nativamente para asegurar que todo el software esté en su última versión.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔋</span>
+                    <h3>Control de Energía</h3>
+                    <p>Alterna del perfil equilibrado al "Alto Rendimiento" justo cuando más lo necesitas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ELIGE TU MODO -->
+    <section class="section modes-section" id="modes">
+        <div class="section-inner">
+            <div class="section-label">Diseño Central</div>
+            <h2 class="section-title">Los perfiles del panel</h2>
+            <div class="mode-cards">
+
+                <div class="mode-card">
+                    <div class="mode-header">
+                        <span class="mode-emoji">🟣</span>
+                        <span class="mode-name">Streaming Mode</span>
+                        <span class="mode-difficulty diff-advanced">Potencia CPU</span>
+                    </div>
+                    <p class="mode-desc">
+                        Pensado para el multi-tarea pesado donde necesitas que OBS Studio y el streaming reciban la mayor tasa de procesamiento. Deja el audio Realtek limpio pero cierra todos tus clientes de mensajería (salvo si abres Discord expresamente) y sincronización.
+                    </p>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-header">
+                        <span class="mode-emoji">🔵</span>
+                        <span class="mode-name">Gaming Mode</span>
+                        <span class="mode-difficulty diff-medium">Potencia GPU</span>
+                    </div>
+                    <p class="mode-desc">
+                        Para juegos AAA. Cambia las claves de registro temporalmente para priorizar la GPU en el sistema (Multimedia/SystemProfile/Tasks/Games) a 8, desactivando procesos de disco como SysMain.
+                    </p>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-header">
+                        <span class="mode-emoji">🔴</span>
+                        <span class="mode-name">Botón de Restaurar</span>
+                        <span class="mode-difficulty diff-easy">Vuelta a la calma</span>
+                    </div>
+                    <p class="mode-desc">
+                        Todo lo que apagas se puede encender de nuevo. Regresa a una gestión de energía balanceada y levanta de nuevo la indización y SysMain en Windows para uso ofimático.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: TECH STACK -->
+    <section class="section stack-section" id="stack">
+        <div class="section-inner">
+            <div class="section-label">Arquitectura ZenDash</div>
+            <h2 class="section-title">El poder de lo "Old-School"</h2>
+            <div class="stack-grid">
+                <div class="stack-item">
+                    <h4>Core</h4>
+                    <p>HTML Application (HTA)</p>
+                </div>
+                <div class="stack-item">
+                    <h4>Sistema Lógico</h4>
+                    <p>VBScript</p>
+                </div>
+                <div class="stack-item">
+                    <h4>Motor Batch</h4>
+                    <p>PowerShell nativo</p>
+                </div>
+                <div class="stack-item">
+                    <h4>Gestión Paquetes</h4>
+                    <p>Winget</p>
+                </div>
+                <div class="stack-item">
+                    <h4>Compatibilidad</h4>
+                    <p>Windows 10 / 11</p>
+                </div>
+                <div class="stack-item">
+                    <h4>Requisitos RAM</h4>
+                    <p>&lt; 5MB RAM</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: CONECTA Y DESPLIEGA -->
+    <section class="section connect-section" id="connect">
+        <div class="section-inner">
+            <h2 class="section-title" style="margin-bottom: 10px;">Descubre el potencial sin instalación</h2>
+            <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto; line-height: 1.7;">
+                ZenDash es de código abierto. Descarga el script y siéntete libre de modificar los procesos a tu antojo en función de tu entorno personal.
+            </p>
+            
+            <a href="https://github.com/erbolamm/ApliArteZenDash" class="btn-deploy" target="_blank">
+                📥 Repositorio en GitHub
+            </a>
+
+            <!-- DONATE SECTION -->
+            <div class="donate-box">
+                <h3 style="color:#fff; font-size:1.1rem; margin-bottom:5px;">💖 Apoya ApliArte</h3>
+                <p style="font-size:14px; text-align:center; margin-bottom:10px; opacity:0.8;">Si esta herramienta te ahorra tiempo y te es útil, considera apoyar su desarrollo.</p>
+                
+                <a href="https://www.paypal.com/paypalme/erbolamm" target="_blank">☕ PayPal</a>
+                <a href="https://streamelements.com/apliarte/tip" target="_blank">🎮 Twitch (Tips)</a>
+                <a href="https://ko-fi.com/C0C11TWR1K" target="_blank">☕ Ko-fi</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>ApliArte ZenDash — <a href="https://apliarte.com" target="_blank">ApliArte.com</a> · Software Libre · 2026</p>
+    </footer>
+
+    <script>
+        // Active dot indicator on scroll
+        const sections = document.querySelectorAll('.section');
+        const dots = document.querySelectorAll('.nav-dots a');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    dots.forEach(d => d.classList.remove('active'));
+                    const activeDot = document.querySelector(`.nav-dots a[href="#${id}"]`);
+                    if (activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(s => observer.observe(s));
+    </script>
+</body>
+
+</html>
