@@ -1,6 +1,8 @@
 <html>
 <head>
-    <title>Panel de Optimizacion</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Panel de Optimizaci&oacute;n</title>
     <HTA:APPLICATION
         ID="OptimizerPanel"
         APPLICATIONNAME="Panel de Optimizacion"
@@ -18,47 +20,36 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #09090b;
+            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            background: #030a12;
             color: #f4f4f5;
-            padding: 20px;
-            width: 480px;
+            padding: 24px;
+            width: 520px;
         }
-        h1 { text-align:center; font-size:24px; font-weight:800; margin-bottom:4px; letter-spacing:0.5px; background:-webkit-linear-gradient(45deg,#3b82f6,#10b981); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .subtitle { text-align:center; color:#a1a1aa; margin-bottom:16px; font-size:13px; }
-        .rambar-wrap { background:#18181b; border:1px solid #27272a; border-radius:12px; padding:12px 16px; margin-bottom:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); }
-        .rambar-label { font-size:12px; color:#a1a1aa; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
-        .refresh-btn { background:#3f3f46; padding:3px 8px; border-radius:4px; color:#fff; cursor:pointer; transition:background 0.2s; }
-        .refresh-btn:hover { background:#52525b; }
-        .rambar-track { background:#000; border-radius:6px; height:8px; overflow:hidden; }
-        .rambar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#10b981,#3b82f6); transition:width 0.3s ease; }
-        .section { color:#71717a; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin:16px 0 8px 4px; }
-        .btn { display:block; width:100%; padding:14px 18px; margin:8px 0; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:transform 0.1s; }
-        .btn:active { transform:scale(0.98); }
-        .btn-streaming { background:linear-gradient(135deg,#8b5cf6,#6d28d9); }
-        .btn-gaming    { background:linear-gradient(135deg,#06b6d4,#0369a1); }
-        .btn-restore   { background:linear-gradient(135deg,#f43f5e,#be123c); }
-        .btn-clean     { background:linear-gradient(135deg,#f59e0b,#b45309); }
-        .btn-update    { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
-        .btn-power     { background:linear-gradient(135deg,#d946ef,#a21caf); }
-        .btn-dns       { background:linear-gradient(135deg,#10b981,#047857); }
-        .btn-web       { background:linear-gradient(135deg,#e94560,#9e1b32); margin-top:15px; }
-        .btn-context   { background:#27272a; color:#f4f4f5; border:1px solid #3f3f46; }
-        .btn-context   { background:#27272a; color:#f4f4f5; border:1px solid #3f3f46; }
-        .desc { font-size:11px; font-weight:400; opacity:0.8; margin-top:4px; line-height:1.4; }
-        .row { display:flex; gap:10px; margin:8px 0; }
-        .row .btn { margin:0; flex:1; font-size:13px; padding:12px 14px; }
-        .status { margin-top:16px; padding:14px 16px; border-radius:12px; background:#18181b; border:1px solid #27272a; font-size:13px; min-height:60px; line-height:1.6; color:#e4e4e7; }
-        .status-label { color:#3b82f6; font-weight:bold; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
-        #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); padding:16px; overflow-y:auto; z-index:99; }
-        .modal { background:#18181b; border-radius:12px; padding:20px; border:1px solid #3f3f46; box-shadow:0 10px 25px rgba(0,0,0,0.5); }
-        .modal h2 { color:#3b82f6; margin-bottom:12px; font-size:16px; font-weight:700; }
-        .modal textarea { width:100%; height:240px; background:#09090b; color:#a1a1aa; border:1px solid #3f3f46; border-radius:8px; padding:12px; font-size:12px; font-family:Consolas,monospace; resize:none; }
-        .modal-footer { margin-top:12px; display:flex; gap:10px; }
-        .mbtn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; color:#fff; transition:opacity 0.2s; }
-        .mbtn:hover { opacity:0.9; }
-        .mbtn-copy { background:#3b82f6; }
-        .mbtn-close { background:#3f3f46; }
+        h1 { text-align:center; font-size:26px; font-weight:900; margin-bottom:4px; letter-spacing:0.5px; background:linear-gradient(135deg, #fff 0%, #AEE2F9 40%, #55CDF5 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .subtitle { text-align:center; color:rgba(255, 255, 255, 0.55); margin-bottom:20px; font-size:13px; font-weight:300; }
+        .rambar-wrap { background:rgba(4, 100, 172, 0.04); border:1px solid rgba(85, 205, 245, 0.15); border-radius:12px; padding:12px 16px; margin-bottom:20px; }
+        .rambar-label { font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+        .refresh-btn { background:transparent; border:1px solid rgba(85,205,245,0.3); padding:4px 10px; border-radius:8px; color:#55CDF5; cursor:pointer; font-size:12px; transition:all 0.2s; }
+        .refresh-btn:hover { background:#55CDF5; color:#000; }
+        .rambar-track { background:#000; border-radius:6px; height:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); }
+        .rambar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#0464AC,#55CDF5); transition:width 0.3s ease; }
+        .section { color:#55CDF5; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:20px 0 10px 4px; }
+        .btn { display:block; width:100%; padding:16px 20px; margin:10px 0; border:1px solid rgba(85,205,245,0.1); border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; transition:all 0.2s ease; background:rgba(4, 100, 172, 0.05); position:relative; overflow:hidden; }
+        .btn:hover { border-color:rgba(85,205,245,0.4); transform:translateY(-2px); }
+        .btn-streaming { border-left:4px solid #8b5cf6; }
+        .btn-gaming    { border-left:4px solid #06b6d4; }
+        .btn-restore   { border-left:4px solid #e94560; }
+        .btn-clean     { border-left:4px solid #f59e0b; }
+        .btn-update    { border-left:4px solid #3b82f6; }
+        .btn-power     { border-left:4px solid #10b981; }
+        .btn-dns       { border-left:4px solid #0464AC; }
+        .btn-web       { border-left:4px solid #55CDF5; background:linear-gradient(135deg,rgba(4,100,172,0.1),transparent); margin-top:20px; }
+        .desc { font-size:12px; font-weight:400; color:rgba(255,255,255,0.55); margin-top:6px; line-height:1.5; }
+        .row { display:flex; gap:12px; margin:10px 0; }
+        .row .btn { margin:0; flex:1; font-size:13px; padding:14px 16px; min-height:80px; }
+        .status { margin-top:20px; padding:16px 20px; border-radius:12px; background:rgba(4,100,172,0.04); border:1px solid rgba(85,205,245,0.15); border-left:4px solid #0464AC; font-size:13px; min-height:70px; line-height:1.6; color:#f4f4f5; }
+        .status-label { color:#55CDF5; font-weight:bold; margin-bottom:6px; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
     </style>
 
     <script language="VBScript">
@@ -183,22 +174,9 @@
             WshShell.Run "https://apliarte.com", 0, False
         End Sub
 
-        Sub ShowContext()
-            document.getElementById("overlay").style.display = "block"
-        End Sub
-        Sub CloseModal()
-            document.getElementById("overlay").style.display = "none"
-        End Sub
-        Sub CopyContext()
-            Dim tmp, f, txt
-            txt = document.getElementById("ctxArea").value
-            tmp = WshShell.ExpandEnvironmentStrings("%TEMP%\ctx_copy.txt")
-            Set f = FSO.CreateTextFile(tmp, True, True)
-            f.Write txt
-            f.Close
-            WshShell.Run "cmd /c clip < """ & tmp & """", 0, True
-            FSO.DeleteFile tmp
-            document.getElementById("copyBtn").innerHTML = "Copiado!"
+        Sub OpenWeb()
+            SetStatus "Abriendo ApliArte.com..."
+            WshShell.Run "https://apliarte.com", 0, False
         End Sub
 
         Sub Window_OnLoad()
@@ -209,12 +187,12 @@
 </head>
 <body>
     <h1>ApliArte ZenDash</h1>
-    <p class="subtitle">El panel definitivo de optimización para Windows</p>
+    <p class="subtitle">El panel definitivo de optimizaci&oacute;n para Windows</p>
 
     <div class="rambar-wrap">
         <div class="rambar-label">
             <span id="ramText">Calculando RAM...</span>
-            <span class="refresh-btn" onclick="RefreshRAM()">↻ Actualizar</span>
+            <span class="refresh-btn" onclick="RefreshRAM()">&#8635; Actualizar</span>
         </div>
         <div class="rambar-track">
             <div class="rambar-fill" id="ramFill" style="width:0%"></div>
@@ -235,7 +213,7 @@
 
     <button class="btn btn-restore" onclick="Restore()">
         Restaurar servicios
-        <div class="desc">Reactiva SysMain y vuelve al perfil de energia Equilibrado.</div>
+        <div class="desc">Reactiva SysMain y vuelve al perfil de energ&iacute;a Equilibrado.</div>
     </button>
 
     <div class="section">Herramientas</div>
@@ -243,83 +221,32 @@
     <div class="row">
         <button class="btn btn-clean" onclick="CleanTemp()">
             Limpiar temporales
-            <div class="desc">Vacia %TEMP% y papelera.</div>
+            <div class="desc">Vac&iacute;a %TEMP% y papelera.</div>
         </button>
         <button class="btn btn-dns" onclick="FlushDNS()">
             Flush DNS
-            <div class="desc">Limpia cache DNS y Winsock.</div>
+            <div class="desc">Limpia cach&eacute; DNS y Winsock.</div>
         </button>
     </div>
 
     <button class="btn btn-power" onclick="TogglePower()">
-        Alternar perfil de energia
+        Alternar perfil de energ&iacute;a
         <div id="powerLabel" class="desc">Perfil actual: Equilibrado</div>
     </button>
 
     <button class="btn btn-update" onclick="UpdateApps()">
         Actualizar aplicaciones (winget)
-        <div class="desc">Actualiza Chrome, OBS, Discord y demas apps instaladas.</div>
+        <div class="desc">Actualiza Windows, Chrome, OBS, Discord y dem&aacute;s apps instaladas.</div>
     </button>
 
     <div class="section">Acerca de</div>
     <button class="btn btn-web" onclick="OpenWeb()">
-        🌍 Visitar ApliArte.com
-        <div class="desc">Descubre más herramientas, arte y proyectos en mi web oficial.</div>
+        &#127760; Visitar ApliArte.com
+        <div class="desc">Descubre m&aacute;s herramientas, arte y proyectos en mi web oficial.</div>
     </button>
-    
-    <div class="section">Copilot</div>
-    <button class="btn btn-context" onclick="ShowContext()">
-        Contexto del proyecto
-        <div class="desc">Copia el prompt para continuar en una nueva conversacion.</div>
-    </button>
-
     <div class="status">
         <div class="status-label">Estado</div>
-        <div id="statusText">Listo. Selecciona una opcion.</div>
-    </div>
-
-    <div id="overlay">
-        <div class="modal">
-            <h2>Contexto del Proyecto</h2>
-            <textarea id="ctxArea" readonly>CONTEXTO DEL PROYECTO: Panel de Optimizacion de PC
-
-Tengo un archivo HTA en mi escritorio llamado "OptimizerPanel.hta".
-Panel de control con estos botones:
-
-1. STREAMING: Cierra Dropbox, Warp, Steam, Discord, CCleaner, SearchApp,
-   RemoteMouse, OneDrive, Spotify, EpicGames.
-
-2. GAMING: Cierra Chrome, Warp, Dropbox, navegadores.
-   Aumenta prioridad GPU. Desactiva SysMain.
-
-3. RESTAURAR: Reactiva SysMain, vuelve a perfil Equilibrado.
-
-4. LIMPIAR TEMPORALES: Vacia %TEMP%, C:\Windows\Temp y papelera.
-
-5. FLUSH DNS: Limpia cache DNS y Winsock.
-
-6. ALTERNAR PERFIL DE ENERGIA: Cambia entre Equilibrado y Alto Rendimiento.
-
-7. ACTUALIZAR APPS: winget upgrade --all
-
-MI SETUP:
-- Windows 10/11
-- CPU: Intel i5-3470 @ 3.20GHz
-- GPU: NVIDIA GTX 1650
-- RAM: 15.5 GB
-- OBS para streaming a Twitch
-- Logitech (LogiOptions activo, LogiBolt desactivado)
-- Audio Realtek (no cerrar)
-
-INICIO DESACTIVADO:
-- LogiBolt, Java Update Scheduler, iCloud, NVIDIA Overlay
-
-QUIERO: [describe aqui lo que quieres anadir o modificar]</textarea>
-            <div class="modal-footer">
-                <button class="mbtn mbtn-copy" id="copyBtn" onclick="CopyContext()">Copiar</button>
-                <button class="mbtn mbtn-close" onclick="CloseModal()">Cerrar</button>
-            </div>
-        </div>
+        <div id="statusText">Listo. Selecciona una opci&oacute;n.</div>
     </div>
 </body>
 </html>
