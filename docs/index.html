@@ -138,10 +138,10 @@
         }
 
         .logo-container img {
-            width: 120px;
+            width: 140px;
             height: auto;
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(85, 205, 245, 0.3);
+            border-radius: 20%;
+            box-shadow: 0 0 40px rgba(85, 205, 245, 0.4);
         }
 
         .hero h1 {
@@ -533,6 +533,21 @@
             padding: 40px 20px;
             color: var(--text-dim);
             font-size: 13px;
+            border-top: 1px solid rgba(85, 205, 245, 0.1);
+            margin-top: 20px;
+        }
+
+        .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .footer-brand img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
         }
 
         .footer a {
@@ -586,7 +601,7 @@
         <div class="section-inner">
             <span class="hero-badge">ApliArte · Windows OS</span>
             <div class="logo-container">
-                <img src="assets/logo.webp" alt="ApliArte ZenDash Logo">
+                <img src="assets/zendash_pro.png" alt="ZenDash Logo">
             </div>
             <h1>ZenDash<br>El panel definitivo</h1>
             <p>Optimiza tu entorno para streaming y gaming. Libera memoria, cambia configuraciones y actualiza tu
@@ -777,8 +792,10 @@
 
             <!-- FOOTER -->
             <footer class="footer">
-                <p>ApliArte ZenDash — <a href="https://apliarte.com" target="_blank">ApliArte.com</a> · Software Libre ·
-                    2026</p>
+                <div class="footer-brand">
+                    ApliArte ZenDash — <img src="assets/logo.webp" alt="ApliArte Logo"><a href="https://apliarte.com"
+                        target="_blank">ApliArte.com</a> · Software Libre · 2026
+                </div>
             </footer>
         </div>
     </section>
