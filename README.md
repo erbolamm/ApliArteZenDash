@@ -25,7 +25,7 @@ Si esta herramienta te ahorra tiempo y te es útil, considera apoyar su desarrol
 ## 📋 Requisitos
 
 - Windows 10 o 11.
-- [App Installer (Winget)](https://apps.microsoft.com/store/detail/app-installer/9NBLGGH4NS1M) instalado para las actualizaciones de apps.
+- [App Installer (Winget)](https://apps.microsoft.com/detail/9nblggh4ns1m) instalado para las actualizaciones de apps.
 
 ## 🚀 Instalación y Uso
 
