@@ -1,0 +1,290 @@
+<html>
+<head>
+    <title>Panel de Optimizacion</title>
+    <HTA:APPLICATION
+        ID="OptimizerPanel"
+        APPLICATIONNAME="Panel de Optimizacion"
+        BORDER="thin"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        MAXIMIZEBUTTON="no"
+        MINIMIZEBUTTON="yes"
+        SHOWINTASKBAR="yes"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+        WINDOWSTATE="normal"
+        SCROLL="auto"
+    />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0d0d1a;
+            color: #fff;
+            padding: 20px;
+            width: 480px;
+        }
+        h1 { text-align:center; font-size:20px; margin-bottom:2px; color:#e94560; }
+        .subtitle { text-align:center; color:#555; margin-bottom:10px; font-size:12px; }
+        .rambar-wrap { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:10px 14px; margin-bottom:14px; }
+        .rambar-label { font-size:12px; color:#aaa; margin-bottom:5px; display:flex; justify-content:space-between; }
+        .rambar-track { background:#111; border-radius:4px; height:10px; overflow:hidden; }
+        .rambar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#06d6a0,#1b9aaa); }
+        .section { color:#555; font-size:10px; text-transform:uppercase; letter-spacing:1px; margin:14px 0 6px 2px; }
+        .btn { display:block; width:100%; padding:13px 16px; margin:7px 0; border:none; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; }
+        .btn:active { opacity:0.82; }
+        .btn-streaming { background:linear-gradient(135deg,#9146FF,#6441a5); }
+        .btn-gaming    { background:linear-gradient(135deg,#1b9aaa,#06d6a0); }
+        .btn-restore   { background:linear-gradient(135deg,#c0392b,#8e1a10); }
+        .btn-clean     { background:linear-gradient(135deg,#e67e22,#a04000); }
+        .btn-update    { background:linear-gradient(135deg,#2980b9,#1a5276); }
+        .btn-power     { background:linear-gradient(135deg,#8e44ad,#5b2c6f); }
+        .btn-dns       { background:linear-gradient(135deg,#27ae60,#1a5e35); }
+        .btn-context   { background:#1a1a2e; color:#888; border:1px solid #2a2a4a; }
+        .desc { font-size:10px; font-weight:400; opacity:0.7; margin-top:3px; }
+        .row { display:flex; gap:7px; margin:7px 0; }
+        .row .btn { margin:0; flex:1; font-size:13px; padding:11px 14px; }
+        .status { margin-top:14px; padding:12px 14px; border-radius:8px; background:#1a1a2e; border:1px solid #2a2a4a; font-size:12px; min-height:50px; line-height:1.7; }
+        .status-label { color:#e94560; font-weight:bold; margin-bottom:3px; font-size:11px; }
+        #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.88); padding:16px; overflow-y:auto; z-index:99; }
+        .modal { background:#12122a; border-radius:10px; padding:18px; border:1px solid #333; }
+        .modal h2 { color:#e94560; margin-bottom:10px; font-size:15px; }
+        .modal textarea { width:100%; height:240px; background:#0a0a18; color:#ccc; border:1px solid #333; border-radius:6px; padding:10px; font-size:11px; font-family:Consolas,monospace; resize:none; }
+        .modal-footer { margin-top:10px; display:flex; gap:8px; }
+        .mbtn { padding:8px 20px; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; color:#fff; }
+        .mbtn-copy { background:#3a3a5a; }
+        .mbtn-close { background:#e94560; }
+    </style>
+
+    <script language="VBScript">
+
+        Dim WshShell, FSO
+        Set WshShell = CreateObject("WScript.Shell")
+        Set FSO = CreateObject("Scripting.FileSystemObject")
+        Dim highPerfActive : highPerfActive = False
+
+        Sub RunPS(code)
+            WshShell.Run "powershell -NoProfile -ExecutionPolicy Bypass -Command " & Chr(34) & code & Chr(34), 0, True
+        End Sub
+
+        Sub SetStatus(msg)
+            document.getElementById("statusText").innerHTML = msg
+        End Sub
+
+        Sub RefreshRAM()
+            Dim wmi, col, obj, total, free, usedPct
+            Set wmi = GetObject("winmgmts:\\.\root\cimv2")
+            Set col = wmi.ExecQuery("SELECT TotalVisibleMemorySize,FreePhysicalMemory FROM Win32_OperatingSystem")
+            For Each obj In col
+                total = CDbl(obj.TotalVisibleMemorySize)
+                free  = CDbl(obj.FreePhysicalMemory)
+            Next
+            Dim usedGB, totalGB, freeGB
+            totalGB = FormatNumber(total/1048576, 1)
+            freeGB  = FormatNumber(free/1048576, 1)
+            usedGB  = FormatNumber((total-free)/1048576, 1)
+            usedPct = CInt(((total-free)/total)*100)
+            document.getElementById("ramText").innerHTML = "RAM libre: <b>" & freeGB & " GB</b> &nbsp;|&nbsp; Usada: " & usedGB & " / " & totalGB & " GB"
+            document.getElementById("ramFill").style.width = usedPct & "%"
+            If usedPct > 80 Then
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e74c3c,#c0392b)"
+            ElseIf usedPct > 60 Then
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e67e22,#d35400)"
+            Else
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#06d6a0,#1b9aaa)"
+            End If
+        End Sub
+
+        Sub OptimizeStreaming()
+            SetStatus "Optimizando para STREAMING..."
+            RunPS "$p=@('Dropbox','setup','UpdateDriver','LogiAiPromptBuilder','CCleaner','SearchApp','RemoteMouse','msedgewebview2','OneDrive','Spotify','Discord','Steam','EpicGamesLauncher','warp');foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue};Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue;[GC]::Collect()"
+            RefreshRAM
+            SetStatus "Streaming listo -- Cerrado: Dropbox, Discord, Steam, Warp, OneDrive, Spotify<br>Arranca OBS y Twitch."
+        End Sub
+
+        Sub OptimizeGaming()
+            SetStatus "Optimizando para GAMING..."
+            RunPS "$p=@('Dropbox','setup','UpdateDriver','LogiAiPromptBuilder','CCleaner','SearchApp','RemoteMouse','msedgewebview2','OneDrive','Spotify','warp','chrome','firefox','msedge');foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue};Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue;Stop-Service 'SysMain' -Force -EA SilentlyContinue;$gp='HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games';Set-ItemProperty $gp 'GPU Priority' 8 -EA SilentlyContinue;Set-ItemProperty $gp 'Priority' 6 -EA SilentlyContinue;[GC]::Collect()"
+            RefreshRAM
+            SetStatus "Gaming listo -- Cerrado: Chrome, Warp, Dropbox, OneDrive<br>Prioridad GPU aumentada. Lanza tu juego."
+        End Sub
+
+        Sub Restore()
+            SetStatus "Restaurando servicios..."
+            RunPS "Start-Service 'SysMain' -EA SilentlyContinue"
+            If highPerfActive Then
+                RunPS "powercfg /setactive SCHEME_BALANCED"
+                highPerfActive = False
+                document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado"
+            End If
+            RefreshRAM
+            SetStatus "Restaurado -- SysMain reactivado, perfil de energia Equilibrado."
+        End Sub
+
+        Sub CleanTemp()
+            SetStatus "Limpiando archivos temporales y papelera..."
+            RunPS "$dirs=@($env:TEMP,'C:\Windows\Temp');foreach($d in $dirs){Get-ChildItem $d -Recurse -Force -EA SilentlyContinue|Remove-Item -Recurse -Force -EA SilentlyContinue};Clear-RecycleBin -Force -EA SilentlyContinue;[GC]::Collect()"
+            RefreshRAM
+            SetStatus "Limpieza completada -- %TEMP%, C:\Windows\Temp y papelera vaciados."
+        End Sub
+
+        Sub FlushDNS()
+            SetStatus "Limpiando cache DNS..."
+            RunPS "ipconfig /flushdns | Out-Null; netsh winsock reset catalog | Out-Null"
+            SetStatus "DNS limpiado -- Cache DNS y Winsock reiniciados. Util contra lag de conexion."
+        End Sub
+
+        Sub TogglePower()
+            If highPerfActive Then
+                RunPS "powercfg /setactive SCHEME_BALANCED"
+                highPerfActive = False
+                document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado"
+                SetStatus "Perfil cambiado a Equilibrado."
+            Else
+                RunPS "powercfg /setactive SCHEME_MIN"
+                highPerfActive = True
+                document.getElementById("powerLabel").innerHTML = "Perfil actual: ALTO RENDIMIENTO"
+                SetStatus "Perfil cambiado a Alto Rendimiento -- Ideal para gaming y streaming."
+            End If
+        End Sub
+
+        Sub UpdateApps()
+            SetStatus "Abriendo actualizaciones con winget... (puede tardar varios minutos)"
+            WshShell.Run "cmd /c start winget upgrade --all --silent --accept-source-agreements --accept-package-agreements", 1, False
+            SetStatus "Actualizaciones en curso -- Se abrio una ventana. Cierra cuando termine."
+        End Sub
+
+        Sub ShowContext()
+            document.getElementById("overlay").style.display = "block"
+        End Sub
+        Sub CloseModal()
+            document.getElementById("overlay").style.display = "none"
+        End Sub
+        Sub CopyContext()
+            Dim tmp, f, txt
+            txt = document.getElementById("ctxArea").value
+            tmp = WshShell.ExpandEnvironmentStrings("%TEMP%\ctx_copy.txt")
+            Set f = FSO.CreateTextFile(tmp, True, True)
+            f.Write txt
+            f.Close
+            WshShell.Run "cmd /c clip < """ & tmp & """", 0, True
+            FSO.DeleteFile tmp
+            document.getElementById("copyBtn").innerHTML = "Copiado!"
+        End Sub
+
+        Sub Window_OnLoad()
+            RefreshRAM
+        End Sub
+
+    </script>
+</head>
+<body>
+    <h1>Panel de Optimizacion</h1>
+    <p class="subtitle">Prepara tu PC para streaming o gaming</p>
+
+    <div class="rambar-wrap">
+        <div class="rambar-label">
+            <span id="ramText">Calculando RAM...</span>
+            <span style="color:#444;font-size:11px;cursor:pointer" onclick="RefreshRAM()">Actualizar</span>
+        </div>
+        <div class="rambar-track">
+            <div class="rambar-fill" id="ramFill" style="width:0%"></div>
+        </div>
+    </div>
+
+    <div class="section">Optimizar</div>
+
+    <button class="btn btn-streaming" onclick="OptimizeStreaming()">
+        Optimizar para STREAMING
+        <div class="desc">Cierra Dropbox, Discord, Steam, Warp, OneDrive, Spotify. Listo para OBS + Twitch.</div>
+    </button>
+
+    <button class="btn btn-gaming" onclick="OptimizeGaming()">
+        Optimizar para GAMING
+        <div class="desc">Cierra Chrome y navegadores. Sube prioridad GPU. Desactiva SysMain.</div>
+    </button>
+
+    <button class="btn btn-restore" onclick="Restore()">
+        Restaurar servicios
+        <div class="desc">Reactiva SysMain y vuelve al perfil de energia Equilibrado.</div>
+    </button>
+
+    <div class="section">Herramientas</div>
+
+    <div class="row">
+        <button class="btn btn-clean" onclick="CleanTemp()">
+            Limpiar temporales
+            <div class="desc">Vacia %TEMP% y papelera.</div>
+        </button>
+        <button class="btn btn-dns" onclick="FlushDNS()">
+            Flush DNS
+            <div class="desc">Limpia cache DNS y Winsock.</div>
+        </button>
+    </div>
+
+    <button class="btn btn-power" onclick="TogglePower()">
+        Alternar perfil de energia
+        <div id="powerLabel" class="desc">Perfil actual: Equilibrado</div>
+    </button>
+
+    <button class="btn btn-update" onclick="UpdateApps()">
+        Actualizar aplicaciones (winget)
+        <div class="desc">Actualiza Chrome, OBS, Discord y demas apps instaladas.</div>
+    </button>
+
+    <div class="section">Copilot</div>
+    <button class="btn btn-context" onclick="ShowContext()">
+        Contexto del proyecto
+        <div class="desc">Copia el prompt para continuar en una nueva conversacion.</div>
+    </button>
+
+    <div class="status">
+        <div class="status-label">Estado</div>
+        <div id="statusText">Listo. Selecciona una opcion.</div>
+    </div>
+
+    <div id="overlay">
+        <div class="modal">
+            <h2>Contexto del Proyecto</h2>
+            <textarea id="ctxArea" readonly>CONTEXTO DEL PROYECTO: Panel de Optimizacion de PC
+
+Tengo un archivo HTA en mi escritorio llamado "OptimizerPanel.hta".
+Panel de control con estos botones:
+
+1. STREAMING: Cierra Dropbox, Warp, Steam, Discord, CCleaner, SearchApp,
+   RemoteMouse, OneDrive, Spotify, EpicGames.
+
+2. GAMING: Cierra Chrome, Warp, Dropbox, navegadores.
+   Aumenta prioridad GPU. Desactiva SysMain.
+
+3. RESTAURAR: Reactiva SysMain, vuelve a perfil Equilibrado.
+
+4. LIMPIAR TEMPORALES: Vacia %TEMP%, C:\Windows\Temp y papelera.
+
+5. FLUSH DNS: Limpia cache DNS y Winsock.
+
+6. ALTERNAR PERFIL DE ENERGIA: Cambia entre Equilibrado y Alto Rendimiento.
+
+7. ACTUALIZAR APPS: winget upgrade --all
+
+MI SETUP:
+- Windows 10/11
+- CPU: Intel i5-3470 @ 3.20GHz
+- GPU: NVIDIA GTX 1650
+- RAM: 15.5 GB
+- OBS para streaming a Twitch
+- Logitech (LogiOptions activo, LogiBolt desactivado)
+- Audio Realtek (no cerrar)
+
+INICIO DESACTIVADO:
+- LogiBolt, Java Update Scheduler, iCloud, NVIDIA Overlay
+
+QUIERO: [describe aqui lo que quieres anadir o modificar]</textarea>
+            <div class="modal-footer">
+                <button class="mbtn mbtn-copy" id="copyBtn" onclick="CopyContext()">Copiar</button>
+                <button class="mbtn mbtn-close" onclick="CloseModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
