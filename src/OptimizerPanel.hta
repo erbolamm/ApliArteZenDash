@@ -42,6 +42,8 @@
         .btn-update    { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
         .btn-power     { background:linear-gradient(135deg,#d946ef,#a21caf); }
         .btn-dns       { background:linear-gradient(135deg,#10b981,#047857); }
+        .btn-web       { background:linear-gradient(135deg,#e94560,#9e1b32); margin-top:15px; }
+        .btn-context   { background:#27272a; color:#f4f4f5; border:1px solid #3f3f46; }
         .btn-context   { background:#27272a; color:#f4f4f5; border:1px solid #3f3f46; }
         .desc { font-size:11px; font-weight:400; opacity:0.8; margin-top:4px; line-height:1.4; }
         .row { display:flex; gap:10px; margin:8px 0; }
@@ -176,6 +178,11 @@
             End If
         End Sub
 
+        Sub OpenWeb()
+            SetStatus "Abriendo ApliArte.com..."
+            WshShell.Run "https://apliarte.com", 0, False
+        End Sub
+
         Sub ShowContext()
             document.getElementById("overlay").style.display = "block"
         End Sub
@@ -254,6 +261,12 @@
         <div class="desc">Actualiza Chrome, OBS, Discord y demas apps instaladas.</div>
     </button>
 
+    <div class="section">Acerca de</div>
+    <button class="btn btn-web" onclick="OpenWeb()">
+        🌍 Visitar ApliArte.com
+        <div class="desc">Descubre más herramientas, arte y proyectos en mi web oficial.</div>
+    </button>
+    
     <div class="section">Copilot</div>
     <button class="btn btn-context" onclick="ShowContext()">
         Contexto del proyecto
