@@ -19,41 +19,44 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #0d0d1a;
-            color: #fff;
+            background: #09090b;
+            color: #f4f4f5;
             padding: 20px;
             width: 480px;
         }
-        h1 { text-align:center; font-size:20px; margin-bottom:2px; color:#e94560; }
-        .subtitle { text-align:center; color:#555; margin-bottom:10px; font-size:12px; }
-        .rambar-wrap { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:10px 14px; margin-bottom:14px; }
-        .rambar-label { font-size:12px; color:#aaa; margin-bottom:5px; display:flex; justify-content:space-between; }
-        .rambar-track { background:#111; border-radius:4px; height:10px; overflow:hidden; }
-        .rambar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#06d6a0,#1b9aaa); }
-        .section { color:#555; font-size:10px; text-transform:uppercase; letter-spacing:1px; margin:14px 0 6px 2px; }
-        .btn { display:block; width:100%; padding:13px 16px; margin:7px 0; border:none; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; }
-        .btn:active { opacity:0.82; }
-        .btn-streaming { background:linear-gradient(135deg,#9146FF,#6441a5); }
-        .btn-gaming    { background:linear-gradient(135deg,#1b9aaa,#06d6a0); }
-        .btn-restore   { background:linear-gradient(135deg,#c0392b,#8e1a10); }
-        .btn-clean     { background:linear-gradient(135deg,#e67e22,#a04000); }
-        .btn-update    { background:linear-gradient(135deg,#2980b9,#1a5276); }
-        .btn-power     { background:linear-gradient(135deg,#8e44ad,#5b2c6f); }
-        .btn-dns       { background:linear-gradient(135deg,#27ae60,#1a5e35); }
-        .btn-context   { background:#1a1a2e; color:#888; border:1px solid #2a2a4a; }
-        .desc { font-size:10px; font-weight:400; opacity:0.7; margin-top:3px; }
-        .row { display:flex; gap:7px; margin:7px 0; }
-        .row .btn { margin:0; flex:1; font-size:13px; padding:11px 14px; }
-        .status { margin-top:14px; padding:12px 14px; border-radius:8px; background:#1a1a2e; border:1px solid #2a2a4a; font-size:12px; min-height:50px; line-height:1.7; }
-        .status-label { color:#e94560; font-weight:bold; margin-bottom:3px; font-size:11px; }
-        #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.88); padding:16px; overflow-y:auto; z-index:99; }
-        .modal { background:#12122a; border-radius:10px; padding:18px; border:1px solid #333; }
-        .modal h2 { color:#e94560; margin-bottom:10px; font-size:15px; }
-        .modal textarea { width:100%; height:240px; background:#0a0a18; color:#ccc; border:1px solid #333; border-radius:6px; padding:10px; font-size:11px; font-family:Consolas,monospace; resize:none; }
-        .modal-footer { margin-top:10px; display:flex; gap:8px; }
-        .mbtn { padding:8px 20px; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; color:#fff; }
-        .mbtn-copy { background:#3a3a5a; }
-        .mbtn-close { background:#e94560; }
+        h1 { text-align:center; font-size:24px; font-weight:800; margin-bottom:4px; letter-spacing:0.5px; background:-webkit-linear-gradient(45deg,#3b82f6,#10b981); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .subtitle { text-align:center; color:#a1a1aa; margin-bottom:16px; font-size:13px; }
+        .rambar-wrap { background:#18181b; border:1px solid #27272a; border-radius:12px; padding:12px 16px; margin-bottom:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); }
+        .rambar-label { font-size:12px; color:#a1a1aa; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+        .refresh-btn { background:#3f3f46; padding:3px 8px; border-radius:4px; color:#fff; cursor:pointer; transition:background 0.2s; }
+        .refresh-btn:hover { background:#52525b; }
+        .rambar-track { background:#000; border-radius:6px; height:8px; overflow:hidden; }
+        .rambar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#10b981,#3b82f6); transition:width 0.3s ease; }
+        .section { color:#71717a; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin:16px 0 8px 4px; }
+        .btn { display:block; width:100%; padding:14px 18px; margin:8px 0; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:transform 0.1s; }
+        .btn:active { transform:scale(0.98); }
+        .btn-streaming { background:linear-gradient(135deg,#8b5cf6,#6d28d9); }
+        .btn-gaming    { background:linear-gradient(135deg,#06b6d4,#0369a1); }
+        .btn-restore   { background:linear-gradient(135deg,#f43f5e,#be123c); }
+        .btn-clean     { background:linear-gradient(135deg,#f59e0b,#b45309); }
+        .btn-update    { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
+        .btn-power     { background:linear-gradient(135deg,#d946ef,#a21caf); }
+        .btn-dns       { background:linear-gradient(135deg,#10b981,#047857); }
+        .btn-context   { background:#27272a; color:#f4f4f5; border:1px solid #3f3f46; }
+        .desc { font-size:11px; font-weight:400; opacity:0.8; margin-top:4px; line-height:1.4; }
+        .row { display:flex; gap:10px; margin:8px 0; }
+        .row .btn { margin:0; flex:1; font-size:13px; padding:12px 14px; }
+        .status { margin-top:16px; padding:14px 16px; border-radius:12px; background:#18181b; border:1px solid #27272a; font-size:13px; min-height:60px; line-height:1.6; color:#e4e4e7; }
+        .status-label { color:#3b82f6; font-weight:bold; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+        #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); padding:16px; overflow-y:auto; z-index:99; }
+        .modal { background:#18181b; border-radius:12px; padding:20px; border:1px solid #3f3f46; box-shadow:0 10px 25px rgba(0,0,0,0.5); }
+        .modal h2 { color:#3b82f6; margin-bottom:12px; font-size:16px; font-weight:700; }
+        .modal textarea { width:100%; height:240px; background:#09090b; color:#a1a1aa; border:1px solid #3f3f46; border-radius:8px; padding:12px; font-size:12px; font-family:Consolas,monospace; resize:none; }
+        .modal-footer { margin-top:12px; display:flex; gap:10px; }
+        .mbtn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; color:#fff; transition:opacity 0.2s; }
+        .mbtn:hover { opacity:0.9; }
+        .mbtn-copy { background:#3b82f6; }
+        .mbtn-close { background:#3f3f46; }
     </style>
 
     <script language="VBScript">
@@ -149,9 +152,28 @@
         End Sub
 
         Sub UpdateApps()
-            SetStatus "Abriendo actualizaciones con winget... (puede tardar varios minutos)"
-            WshShell.Run "cmd /c start winget upgrade --all --silent --accept-source-agreements --accept-package-agreements", 1, False
-            SetStatus "Actualizaciones en curso -- Se abrio una ventana. Cierra cuando termine."
+            SetStatus "Comprobando disponibilidad de winget..."
+            Dim tmpPath, f, content
+            tmpPath = WshShell.ExpandEnvironmentStrings("%TEMP%\winget_check.txt")
+            WshShell.Run "cmd /c winget --version > """ & tmpPath & """ 2>&1", 0, True
+            
+            Dim hasWinget : hasWinget = False
+            If FSO.FileExists(tmpPath) Then
+                Set f = FSO.OpenTextFile(tmpPath, 1)
+                If Not f.AtEndOfStream Then
+                    content = f.ReadAll
+                    If InStr(content, "v1") > 0 Or InStr(content, "v0") > 0 Or InStr(content, "Windows") > 0 Then hasWinget = True
+                End If
+                f.Close
+                FSO.DeleteFile tmpPath
+            End If
+            
+            If hasWinget Then
+                WshShell.Run "cmd /c start """" cmd /c ""title ApliArteZenDash - Actualizaciones & echo === Actualizando Apps === & echo. & winget upgrade --all --silent --accept-source-agreements --accept-package-agreements & echo. & echo Proceso completado. & pause""", 1, False
+                SetStatus "Actualizaciones ejecutándose en una nueva ventana..."
+            Else
+                SetStatus "<span style='color:#ef4444'>Error: winget no detectado. Instala App Installer en la Microsoft Store.</span>"
+            End If
         End Sub
 
         Sub ShowContext()
@@ -179,13 +201,13 @@
     </script>
 </head>
 <body>
-    <h1>Panel de Optimizacion</h1>
-    <p class="subtitle">Prepara tu PC para streaming o gaming</p>
+    <h1>ApliArte ZenDash</h1>
+    <p class="subtitle">El panel definitivo de optimización para Windows</p>
 
     <div class="rambar-wrap">
         <div class="rambar-label">
             <span id="ramText">Calculando RAM...</span>
-            <span style="color:#444;font-size:11px;cursor:pointer" onclick="RefreshRAM()">Actualizar</span>
+            <span class="refresh-btn" onclick="RefreshRAM()">↻ Actualizar</span>
         </div>
         <div class="rambar-track">
             <div class="rambar-fill" id="ramFill" style="width:0%"></div>
