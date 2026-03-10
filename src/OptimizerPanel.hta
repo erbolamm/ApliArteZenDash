@@ -28,12 +28,15 @@
         }
         h1 { text-align:center; font-size:26px; font-weight:900; margin-bottom:4px; letter-spacing:0.5px; background:linear-gradient(135deg, #fff 0%, #AEE2F9 40%, #55CDF5 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .subtitle { text-align:center; color:rgba(255, 255, 255, 0.55); margin-bottom:20px; font-size:13px; font-weight:300; }
+        
+        /* RAM BAR */
         .rambar-wrap { background:rgba(4, 100, 172, 0.04); border:1px solid rgba(85, 205, 245, 0.15); border-radius:12px; padding:12px 16px; margin-bottom:20px; }
         .rambar-label { font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
         .refresh-btn { background:transparent; border:1px solid rgba(85,205,245,0.3); padding:4px 10px; border-radius:8px; color:#55CDF5; cursor:pointer; font-size:12px; transition:all 0.2s; }
         .refresh-btn:hover { background:#55CDF5; color:#000; }
         .rambar-track { background:#000; border-radius:6px; height:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); }
         .rambar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#0464AC,#55CDF5); transition:width 0.3s ease; }
+        
         .section { color:#55CDF5; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin:20px 0 10px 4px; }
         .btn { display:block; width:100%; padding:16px 20px; margin:10px 0; border:1px solid rgba(85,205,245,0.1); border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; color:#fff; transition:all 0.2s ease; background:rgba(4, 100, 172, 0.05); position:relative; overflow:hidden; }
         .btn:hover { border-color:rgba(85,205,245,0.4); transform:translateY(-2px); }
@@ -48,141 +51,308 @@
         .desc { font-size:12px; font-weight:400; color:rgba(255,255,255,0.55); margin-top:6px; line-height:1.5; }
         .row { display:flex; gap:12px; margin:10px 0; }
         .row .btn { margin:0; flex:1; font-size:13px; padding:14px 16px; min-height:80px; }
+        
+        /* WIZARD & DYNAMIC LIST */
+        .wizard { background: rgba(4, 100, 172, 0.05); border: 1px solid rgba(85,205,245,0.15); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .wizard-title { font-size: 15px; font-weight: 700; color: #55CDF5; margin-bottom: 8px; display:flex; align-items:center; gap:8px;}
+        .proc-list { max-height: 220px; overflow-y: auto; margin: 15px 0; padding-right: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); padding: 10px; border: 1px solid rgba(255,255,255,0.05);}
+        .proc-list::-webkit-scrollbar { width: 6px; }
+        .proc-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+        .proc-list::-webkit-scrollbar-thumb { background: rgba(85,205,245,0.3); border-radius: 4px; }
+        .proc-list::-webkit-scrollbar-thumb:hover { background: rgba(85,205,245,0.6); }
+        .proc-item { display:flex; align-items:center; padding:10px 12px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:8px; cursor:pointer; transition:background 0.2s; border: 1px solid transparent; }
+        .proc-item:hover { background:rgba(255,255,255,0.07); border-color: rgba(85,205,245,0.2); }
+        .proc-item.marked { border-color: rgba(139, 92, 246, 0.4); background:rgba(139, 92, 246, 0.05); }
+        
+        .btn-confirm { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border:none; padding:14px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:14px; width: 100%; margin-bottom:10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); transition:all 0.2s;}
+        .btn-confirm:hover { filter: brightness(1.1); transform:translateY(-1px); }
+        .btn-cancel { background: transparent; color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.2); padding:10px; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer; width: 100%; transition:all 0.2s;}
+        .btn-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
         .status { margin-top:20px; padding:16px 20px; border-radius:12px; background:rgba(4,100,172,0.04); border:1px solid rgba(85,205,245,0.15); border-left:4px solid #0464AC; font-size:13px; min-height:70px; line-height:1.6; color:#f4f4f5; }
         .status-label { color:#55CDF5; font-weight:bold; margin-bottom:6px; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
     </style>
 
-    <script language="VBScript">
+    <script language="JScript">
+        var WshShell = new ActiveXObject("WScript.Shell");
+        var FSO = new ActiveXObject("Scripting.FileSystemObject");
+        var highPerfActive = false;
 
-        Dim WshShell, FSO
-        Set WshShell = CreateObject("WScript.Shell")
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        Dim highPerfActive : highPerfActive = False
+        // Configuration of apps that should be pre-checked aggressively for streaming logic
+        var knownHeavyApps = ["dropbox", "onedrive", "spotify", "discord", "steam", "epicgameslauncher", "warp", "ccleaner", "setup", "updatedriver", "logiaipromptbuilder"];
 
-        Sub RunPS(code)
-            WshShell.Run "powershell -NoProfile -ExecutionPolicy Bypass -Command " & Chr(34) & code & Chr(34), 0, True
-        End Sub
+        function RunPS(code) {
+            var psExe = "powershell";
+            var sysnativePath = WshShell.ExpandEnvironmentStrings("%WINDIR%\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe");
+            if (FSO.FileExists(sysnativePath)) {
+                psExe = sysnativePath;
+            }
+            WshShell.Run(psExe + " -NoProfile -ExecutionPolicy Bypass -Command \"" + code + "\"", 0, true);
+        }
 
-        Sub SetStatus(msg)
-            document.getElementById("statusText").innerHTML = msg
-        End Sub
+        function SetStatus(msg) {
+            document.getElementById("statusText").innerHTML = msg;
+        }
 
-        Sub RefreshRAM()
-            Dim wmi, col, obj, total, free, usedPct
-            Set wmi = GetObject("winmgmts:\\.\root\cimv2")
-            Set col = wmi.ExecQuery("SELECT TotalVisibleMemorySize,FreePhysicalMemory FROM Win32_OperatingSystem")
-            For Each obj In col
-                total = CDbl(obj.TotalVisibleMemorySize)
-                free  = CDbl(obj.FreePhysicalMemory)
-            Next
-            Dim usedGB, totalGB, freeGB
-            totalGB = FormatNumber(total/1048576, 1)
-            freeGB  = FormatNumber(free/1048576, 1)
-            usedGB  = FormatNumber((total-free)/1048576, 1)
-            usedPct = CInt(((total-free)/total)*100)
-            document.getElementById("ramText").innerHTML = "RAM libre: <b>" & freeGB & " GB</b> &nbsp;|&nbsp; Usada: " & usedGB & " / " & totalGB & " GB"
-            document.getElementById("ramFill").style.width = usedPct & "%"
-            If usedPct > 80 Then
-                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e74c3c,#c0392b)"
-            ElseIf usedPct > 60 Then
-                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e67e22,#d35400)"
-            Else
-                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#06d6a0,#1b9aaa)"
-            End If
-        End Sub
+        function RefreshRAM() {
+            var wmi = GetObject("winmgmts:\\\\.\\root\\cimv2");
+            var col = wmi.ExecQuery("SELECT TotalVisibleMemorySize,FreePhysicalMemory FROM Win32_OperatingSystem");
+            var e = new Enumerator(col);
+            var total = 0, free = 0;
+            for (; !e.atEnd(); e.moveNext()) {
+                var item = e.item();
+                total = parseFloat(item.TotalVisibleMemorySize);
+                free = parseFloat(item.FreePhysicalMemory);
+            }
+            var totalGB = (total / 1048576).toFixed(1);
+            var freeGB = (free / 1048576).toFixed(1);
+            var usedGB = ((total - free) / 1048576).toFixed(1);
+            var usedPct = Math.round(((total - free) / total) * 100);
 
-        Sub OptimizeStreaming()
-            SetStatus "Optimizando para STREAMING..."
-            RunPS "$p=@('Dropbox','setup','UpdateDriver','LogiAiPromptBuilder','CCleaner','SearchApp','RemoteMouse','msedgewebview2','OneDrive','Spotify','Discord','Steam','EpicGamesLauncher','warp');foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue};Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue;[GC]::Collect()"
-            RefreshRAM
-            SetStatus "Streaming listo -- Cerrado: Dropbox, Discord, Steam, Warp, OneDrive, Spotify<br>Arranca OBS y Twitch."
-        End Sub
-
-        Sub OptimizeGaming()
-            SetStatus "Optimizando para GAMING..."
-            RunPS "$p=@('Dropbox','setup','UpdateDriver','LogiAiPromptBuilder','CCleaner','SearchApp','RemoteMouse','msedgewebview2','OneDrive','Spotify','warp','chrome','firefox','msedge');foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue};Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue;Stop-Service 'SysMain' -Force -EA SilentlyContinue;$gp='HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games';Set-ItemProperty $gp 'GPU Priority' 8 -EA SilentlyContinue;Set-ItemProperty $gp 'Priority' 6 -EA SilentlyContinue;[GC]::Collect()"
-            RefreshRAM
-            SetStatus "Gaming listo -- Cerrado: Chrome, Warp, Dropbox, OneDrive<br>Prioridad GPU aumentada. Lanza tu juego."
-        End Sub
-
-        Sub Restore()
-            SetStatus "Restaurando servicios..."
-            RunPS "Start-Service 'SysMain' -EA SilentlyContinue"
-            If highPerfActive Then
-                RunPS "powercfg /setactive SCHEME_BALANCED"
-                highPerfActive = False
-                document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado"
-            End If
-            RefreshRAM
-            SetStatus "Restaurado -- SysMain reactivado, perfil de energia Equilibrado."
-        End Sub
-
-        Sub CleanTemp()
-            SetStatus "Limpiando archivos temporales y papelera..."
-            RunPS "$dirs=@($env:TEMP,'C:\Windows\Temp');foreach($d in $dirs){Get-ChildItem $d -Recurse -Force -EA SilentlyContinue|Remove-Item -Recurse -Force -EA SilentlyContinue};Clear-RecycleBin -Force -EA SilentlyContinue;[GC]::Collect()"
-            RefreshRAM
-            SetStatus "Limpieza completada -- %TEMP%, C:\Windows\Temp y papelera vaciados."
-        End Sub
-
-        Sub FlushDNS()
-            SetStatus "Limpiando cache DNS..."
-            RunPS "ipconfig /flushdns | Out-Null; netsh winsock reset catalog | Out-Null"
-            SetStatus "DNS limpiado -- Cache DNS y Winsock reiniciados. Util contra lag de conexion."
-        End Sub
-
-        Sub TogglePower()
-            If highPerfActive Then
-                RunPS "powercfg /setactive SCHEME_BALANCED"
-                highPerfActive = False
-                document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado"
-                SetStatus "Perfil cambiado a Equilibrado."
-            Else
-                RunPS "powercfg /setactive SCHEME_MIN"
-                highPerfActive = True
-                document.getElementById("powerLabel").innerHTML = "Perfil actual: ALTO RENDIMIENTO"
-                SetStatus "Perfil cambiado a Alto Rendimiento -- Ideal para gaming y streaming."
-            End If
-        End Sub
-
-        Sub UpdateApps()
-            SetStatus "Comprobando disponibilidad de winget..."
-            Dim tmpPath, f, content
-            tmpPath = WshShell.ExpandEnvironmentStrings("%TEMP%\winget_check.txt")
-            WshShell.Run "cmd /c winget --version > """ & tmpPath & """ 2>&1", 0, True
+            document.getElementById("ramText").innerHTML = "RAM libre: <b>" + freeGB + " GB</b> &nbsp;|&nbsp; Usada: " + usedGB + " / " + totalGB + " GB";
+            document.getElementById("ramFill").style.width = usedPct + "%";
             
-            Dim hasWinget : hasWinget = False
-            If FSO.FileExists(tmpPath) Then
-                Set f = FSO.OpenTextFile(tmpPath, 1)
-                If Not f.AtEndOfStream Then
-                    content = f.ReadAll
-                    If InStr(content, "v1") > 0 Or InStr(content, "v0") > 0 Or InStr(content, "Windows") > 0 Then hasWinget = True
-                End If
-                f.Close
-                FSO.DeleteFile tmpPath
-            End If
+            if (usedPct > 80) {
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e74c3c,#c0392b)";
+            } else if (usedPct > 60) {
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#e67e22,#d35400)";
+            } else {
+                document.getElementById("ramFill").style.background = "linear-gradient(90deg,#06d6a0,#1b9aaa)";
+            }
+        }
+
+        function ToggleCheck(elId) {
+            var cb = document.getElementById(elId);
+            var parent = cb.parentNode;
+            cb.checked = !cb.checked;
+            if (cb.checked) {
+                parent.className = "proc-item marked";
+            } else {
+                parent.className = "proc-item";
+            }
+        }
+
+        function StartStreamingWizard() {
+            SetStatus("Ejecutando escáner de memoria en vivo...");
+            document.getElementById("mainMenu").style.display = "none";
+            document.getElementById("streamingWizard").style.display = "block";
+            document.getElementById("procList").innerHTML = "<p style='color:#55CDF5;font-size:13px;text-align:center;padding:30px 0;'>Escaneando procesos locales...</p>";
             
-            If hasWinget Then
-                WshShell.Run "cmd /c start """" cmd /c ""title ApliArteZenDash - Actualizaciones & echo === Actualizando Apps === & echo. & winget upgrade --all --silent --accept-source-agreements --accept-package-agreements & echo. & echo Proceso completado. & pause""", 1, False
-                SetStatus "Actualizaciones ejecutándose en una nueva ventana..."
-            Else
-                SetStatus "<span style='color:#ef4444'>Error: winget no detectado. Instala App Installer en la Microsoft Store.</span>"
-            End If
-        End Sub
+            // Usamos setTimeout para que la UI se actualice y muestre el mensaje antes de bloquear con WshShell.Run sincrónico
+            setTimeout(function() {
+                var tempFile = WshShell.ExpandEnvironmentStrings("%TEMP%\\procs_out.txt");
+                // Buscamos procesos de más de 20MB, que no sean críticos de Windows y recuperamos nombres únicos.
+                var psCode = "Get-Process | Where-Object WorkingSet64 -gt 20MB | Where-Object Path | Where-Object Path -notmatch '(?i)Windows|Microsoft' | Select-Object -ExpandProperty Name | Sort-Object -Unique | Out-File -FilePath '" + tempFile + "' -Encoding ascii";
+                
+                RunPS(psCode);
+                
+                var procs = [];
+                if (FSO.FileExists(tempFile)) {
+                    var file = FSO.OpenTextFile(tempFile, 1);
+                    var content = (!file.AtEndOfStream) ? file.ReadAll() : "";
+                    file.Close();
+                    FSO.DeleteFile(tempFile);
+                    
+                    var lines = content.split('\n');
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i].replace(/\r/g, '').replace(/^\s+|\s+$/g, '');
+                        if (line && line.toLowerCase() !== "name" && line.indexOf("----") === -1 && line.toLowerCase() !== "explorer") {
+                            procs.push(line);
+                        }
+                    }
+                }
+                
+                var html = "";
+                if(procs.length === 0) {
+                    var debugInfo = "";
+                    if (!FSO.FileExists(tempFile)) {
+                        debugInfo = "El archivo temporal no se creó en " + tempFile;
+                    } else {
+                        var fileDebug = FSO.OpenTextFile(tempFile, 1);
+                        var rawCont = !fileDebug.AtEndOfStream ? fileDebug.ReadAll() : "VACÍO";
+                        fileDebug.Close();
+                        debugInfo = "Archivo creado. Contenido: " + rawCont;
+                    }
+                    html = "<p style='color:rgba(255,255,255,0.6);font-size:13px;text-align:center;padding:20px;'>No se han detectado procesos pesados de terceros.<br>DEBUG INFO:<br>" + debugInfo + "</p>";
+                } else {
+                    for(var i=0; i<procs.length; i++) {
+                        var pName = procs[i];
+                        var pLower = pName.toLowerCase();
+                        var shouldCheck = false;
+                        
+                        // Lógica de Pre-selección inteligente
+                        for(var k=0; k<knownHeavyApps.length; k++) {
+                            if(pLower.indexOf(knownHeavyApps[k]) !== -1) {
+                                shouldCheck = true;
+                                break;
+                            }
+                        }
+                        
+                        // Proteger expresamente software vital o típicamente protegido en Streaming
+                        if(pLower.indexOf("obs") !== -1 || pLower.indexOf("stream") !== -1 || pLower.indexOf("chrome") !== -1 || pLower.indexOf("logioptions") !== -1) {
+                            shouldCheck = false; 
+                        }
+                        
+                        var checkedStr = shouldCheck ? "checked" : "";
+                        var classStr = shouldCheck ? "proc-item marked" : "proc-item";
+                        var chkId = "chk_" + i;
+                        
+                        html += "<label class='" + classStr + "' onclick='ToggleCheck(\"" + chkId + "\"); event.preventDefault();'>";
+                        html += "<input type='checkbox' class='proc-checkbox' id='" + chkId + "' value='" + pName + "' " + checkedStr + " style='margin-right:12px; width:16px; height:16px; accent-color:#8b5cf6;'>";
+                        html += "<span style='font-size:14px; font-weight:600;'>" + pName + "</span></label>";
+                    }
+                }
+                document.getElementById("procList").innerHTML = html;
+                SetStatus("Escaneo finalizado. Revisa y selecciona qué cerrar para tu Directo.");
+            }, 50);
+        }
 
-        Sub OpenWeb()
-            SetStatus "Abriendo ApliArte.com..."
-            WshShell.Run "https://apliarte.com", 0, False
-        End Sub
+        function ExecuteStreaming() {
+            var checkboxes = document.getElementsByClassName("proc-checkbox");
+            var toClose = [];
+            for(var i=0; i<checkboxes.length; i++) {
+                if(checkboxes[i].checked) {
+                    toClose.push(checkboxes[i].value);
+                }
+            }
+            
+            document.getElementById("streamingWizard").style.display = "none";
+            document.getElementById("mainMenu").style.display = "block";
+            
+            if(toClose.length > 0) {
+                SetStatus("Cerrando aplicaciones para concentrar recursos... (" + toClose.length + " tareas)");
+                setTimeout(function() {
+                    var psArray = "'" + toClose.join("','") + "'";
+                    var cmd = "$p=@(" + psArray + ");foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue}; Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue; [GC]::Collect()";
+                    RunPS(cmd);
+                    RefreshRAM();
+                    SetStatus("<span style='color:#10b981;font-weight:bold;'>✓ Streaming Boost Activo</span><br>Se han cerrado " + toClose.length + " aplicaciones satélite. Arranca OBS y Twitch sin lag.");
+                }, 50);
+            } else {
+                SetStatus("No se cerró ninguna aplicación. Operación omitida.");
+            }
+        }
 
-        Sub OpenWeb()
-            SetStatus "Abriendo ApliArte.com..."
-            WshShell.Run "https://apliarte.com", 0, False
-        End Sub
+        function CancelStreaming() {
+            document.getElementById("streamingWizard").style.display = "none";
+            document.getElementById("mainMenu").style.display = "block";
+            SetStatus("Modo interactivo cancelado.");
+        }
 
-        Sub Window_OnLoad()
-            RefreshRAM
-        End Sub
+        function OptimizeGaming() {
+            SetStatus("Optimizando para GAMING (Cerrando procesos y ajustando prioridades)...");
+            setTimeout(function() {
+                RunPS("$p=@('Dropbox','setup','UpdateDriver','LogiAiPromptBuilder','CCleaner','SearchApp','RemoteMouse','msedgewebview2','OneDrive','Spotify','warp','chrome','firefox','msedge');foreach($n in $p){Stop-Process -Name $n -Force -EA SilentlyContinue};Stop-Service 'CCleaner_service' -Force -EA SilentlyContinue;Stop-Service 'SysMain' -Force -EA SilentlyContinue;$gp='HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games';Set-ItemProperty $gp 'GPU Priority' 8 -EA SilentlyContinue;Set-ItemProperty $gp 'Priority' 6 -EA SilentlyContinue;[GC]::Collect()");
+                RefreshRAM();
+                SetStatus("<span style='color:#06b6d4;font-weight:bold;'>✓ Gaming Boost Activo</span><br>Prioridad GPU aumentada al máximo. Procesadores de red, ofimáticos y navegadores cerrados.");
+            }, 50);
+        }
 
+        function Restore() {
+            SetStatus("Restaurando servicios y perfil de energía...");
+            setTimeout(function() {
+                RunPS("Start-Service 'SysMain' -EA SilentlyContinue");
+                if (highPerfActive) {
+                    RunPS("powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e"); // GUID Equilibrado estandar
+                    highPerfActive = false;
+                    document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado";
+                }
+                RefreshRAM();
+                SetStatus("Restaurado -- SysMain reactivado, perfil de energía devuelto a Equilibrado.");
+            }, 50);
+        }
+
+        function CleanTemp() {
+            SetStatus("Limpiando archivos temporales y papelera...");
+            setTimeout(function() {
+                RunPS("$dirs=@($env:TEMP,'C:\\Windows\\Temp');foreach($d in $dirs){Get-ChildItem $d -Recurse -Force -EA SilentlyContinue|Remove-Item -Recurse -Force -EA SilentlyContinue};Clear-RecycleBin -Force -EA SilentlyContinue;[GC]::Collect()");
+                RefreshRAM();
+                SetStatus("Limpieza completada -- %TEMP%, C:\\Windows\\Temp y papelera vaciados con éxito.");
+            }, 50);
+        }
+
+        function FlushDNS() {
+            SetStatus("Limpiando caché DNS y reiniciando Winsock...");
+            setTimeout(function() {
+                RunPS("ipconfig /flushdns | Out-Null; netsh winsock reset catalog | Out-Null");
+                SetStatus("DNS limpiado -- Caché DNS y entorno de red refrescados.");
+            }, 50);
+        }
+
+        function TogglePower() {
+            SetStatus("Cambiando plan de energía...");
+            setTimeout(function() {
+                if (highPerfActive) {
+                    RunPS("powercfg /setactive 381b4222-f694-41f0-9685-ff5bb260df2e");
+                    highPerfActive = false;
+                    document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado";
+                    SetStatus("Perfil cambiado a Equilibrado.");
+                } else {
+                    RunPS("powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+                    highPerfActive = true;
+                    document.getElementById("powerLabel").innerHTML = "Perfil actual: ALTO RENDIMIENTO";
+                    SetStatus("Perfil cambiado a Alto Rendimiento -- Ideal para gaming y streaming.");
+                }
+            }, 50);
+        }
+
+        function UpdateApps() {
+            SetStatus("Comprobando disponibilidad de winget...");
+            setTimeout(function() {
+                var tmpPath = WshShell.ExpandEnvironmentStrings("%TEMP%\\winget_check.txt");
+                WshShell.Run("cmd /c winget --version > \"" + tmpPath + "\" 2>&1", 0, true);
+                
+                var hasWinget = false;
+                if (FSO.FileExists(tmpPath)) {
+                    var f = FSO.OpenTextFile(tmpPath, 1);
+                    if (!f.AtEndOfStream) {
+                        var content = f.ReadAll();
+                        if (content.indexOf("v1") > -1 || content.indexOf("v0") > -1 || content.indexOf("Windows") > -1) {
+                            hasWinget = true;
+                        }
+                    }
+                    f.Close();
+                    FSO.DeleteFile(tmpPath);
+                }
+                
+                if (hasWinget) {
+                    WshShell.Run("cmd /c start \"\" cmd /c \"title ApliArteZenDash - Actualizaciones & echo === Actualizando Apps === & echo. & winget upgrade --all --silent --accept-source-agreements --accept-package-agreements & echo. & echo Proceso completado. & pause\"", 1, false);
+                    SetStatus("Actualizaciones ejecutándose en una nueva consola...");
+                } else {
+                    SetStatus("<span style='color:#ef4444'>Error: winget no detectado. Instala App Installer en la Microsoft Store.</span>");
+                }
+            }, 50);
+        }
+        
+        function InitState() {
+            var tmpPath = WshShell.ExpandEnvironmentStrings("%TEMP%\\power_check.txt");
+            WshShell.Run("cmd /c powercfg /getactivescheme > \"" + tmpPath + "\" 2>&1", 0, true);
+            if (FSO.FileExists(tmpPath)) {
+                var f = FSO.OpenTextFile(tmpPath, 1);
+                var content = (!f.AtEndOfStream) ? f.ReadAll() : "";
+                f.Close();
+                FSO.DeleteFile(tmpPath);
+                
+                // 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c es GUID Alto Rendimiento en Windows Oficial
+                if (content.indexOf("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c") > -1 || content.toLowerCase().indexOf("alto rendimiento") > -1) {
+                    highPerfActive = true;
+                    document.getElementById("powerLabel").innerHTML = "Perfil actual: ALTO RENDIMIENTO";
+                } else {
+                    highPerfActive = false;
+                    document.getElementById("powerLabel").innerHTML = "Perfil actual: Equilibrado";
+                }
+            }
+            RefreshRAM();
+        }
+
+        function OpenWeb() {
+            SetStatus("Abriendo ApliArte.com...");
+            WshShell.Run("https://apliarte.com", 0, false);
+        }
+
+        window.onload = function() {
+            InitState();
+        };
     </script>
 </head>
 <body>
@@ -199,51 +369,73 @@
         </div>
     </div>
 
-    <div class="section">Optimizar</div>
+    <!-- PANTALLA SECUNDARIA: WIZARD DE STREAMING -->
+    <div id="streamingWizard" style="display:none;" class="wizard">
+        <div class="wizard-title">
+            <span style="font-size:20px;">⚡</span> Escaneo en vivo: Procesos Críticos
+        </div>
+        <p style="font-size:12px; color:rgba(255,255,255,0.6); margin-bottom:12px; line-height:1.5;">
+            Selecciona las aplicaciones que deseas detener para concentrar la memoria RAM y el ancho de banda. 
+        </p>
+        
+        <div id="procList" class="proc-list">
+            <!-- Checkboxes generados dinamicamente desde JavaScript -->
+        </div>
+        
+        <button class="btn-confirm" onclick="ExecuteStreaming()">Cerrar seleccionados e iniciar Boost</button>
+        <button class="btn-cancel" onclick="CancelStreaming()">Volver al menú</button>
+    </div>
 
-    <button class="btn btn-streaming" onclick="OptimizeStreaming()">
-        Optimizar para STREAMING
-        <div class="desc">Cierra Dropbox, Discord, Steam, Warp, OneDrive, Spotify. Listo para OBS + Twitch.</div>
-    </button>
+    <!-- PANTALLA PRINCIPAL: MENU -->
+    <div id="mainMenu">
+        <div class="section">Optimizar</div>
 
-    <button class="btn btn-gaming" onclick="OptimizeGaming()">
-        Optimizar para GAMING
-        <div class="desc">Cierra Chrome y navegadores. Sube prioridad GPU. Desactiva SysMain.</div>
-    </button>
-
-    <button class="btn btn-restore" onclick="Restore()">
-        Restaurar servicios
-        <div class="desc">Reactiva SysMain y vuelve al perfil de energ&iacute;a Equilibrado.</div>
-    </button>
-
-    <div class="section">Herramientas</div>
-
-    <div class="row">
-        <button class="btn btn-clean" onclick="CleanTemp()">
-            Limpiar temporales
-            <div class="desc">Vac&iacute;a %TEMP% y papelera.</div>
+        <button class="btn btn-streaming" onclick="StartStreamingWizard()">
+            Optimizar para STREAMING 
+            <span style="font-size:10px;background:rgba(139, 92, 246, 0.2);color:#c4b5fd;padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle;border:1px solid rgba(139, 92, 246, 0.4);">Dinámico</span>
+            <div class="desc">Escanea la memoria en directo, muestra tus apps y permite cerrar Dropbox, Warp y otras bajo demanda.</div>
         </button>
-        <button class="btn btn-dns" onclick="FlushDNS()">
-            Flush DNS
-            <div class="desc">Limpia cach&eacute; DNS y Winsock.</div>
+
+        <button class="btn btn-gaming" onclick="OptimizeGaming()">
+            Optimizar para GAMING
+            <div class="desc">Cierra Chrome y navegadores. Sube prioridad GPU. Desactiva SysMain.</div>
+        </button>
+
+        <button class="btn btn-restore" onclick="Restore()">
+            Restaurar servicios
+            <div class="desc">Reactiva SysMain y vuelve al perfil de energ&iacute;a Equilibrado.</div>
+        </button>
+
+        <div class="section">Herramientas</div>
+
+        <div class="row">
+            <button class="btn btn-clean" onclick="CleanTemp()">
+                Limpiar temporales
+                <div class="desc">Vac&iacute;a %TEMP% y papelera.</div>
+            </button>
+            <button class="btn btn-dns" onclick="FlushDNS()">
+                Flush DNS
+                <div class="desc">Limpia cach&eacute; DNS y Winsock.</div>
+            </button>
+        </div>
+
+        <button class="btn btn-power" onclick="TogglePower()">
+            Alternar perfil de energ&iacute;a
+            <div id="powerLabel" class="desc">Perfil actual: Equilibrado</div>
+        </button>
+
+        <button class="btn btn-update" onclick="UpdateApps()">
+            Actualizar aplicaciones (winget)
+            <div class="desc">Actualiza Windows, Chrome, OBS, Discord y dem&aacute;s apps instaladas.</div>
+        </button>
+
+        <div class="section">Acerca de</div>
+        <button class="btn btn-web" onclick="OpenWeb()">
+            &#127760; Visitar ApliArte.com
+            <div class="desc">Descubre m&aacute;s herramientas, arte y proyectos en mi web oficial.</div>
         </button>
     </div>
 
-    <button class="btn btn-power" onclick="TogglePower()">
-        Alternar perfil de energ&iacute;a
-        <div id="powerLabel" class="desc">Perfil actual: Equilibrado</div>
-    </button>
-
-    <button class="btn btn-update" onclick="UpdateApps()">
-        Actualizar aplicaciones (winget)
-        <div class="desc">Actualiza Windows, Chrome, OBS, Discord y dem&aacute;s apps instaladas.</div>
-    </button>
-
-    <div class="section">Acerca de</div>
-    <button class="btn btn-web" onclick="OpenWeb()">
-        &#127760; Visitar ApliArte.com
-        <div class="desc">Descubre m&aacute;s herramientas, arte y proyectos en mi web oficial.</div>
-    </button>
     <div class="status">
         <div class="status-label">Estado</div>
         <div id="statusText">Listo. Selecciona una opci&oacute;n.</div>
