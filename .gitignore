@@ -1,0 +1,24 @@
+# Archivos de contexto y conversaciones
+contexto.txt
+plantilla*.txt
+platilla*.txt
+
+# Archivos de configuración personal
+src/config/user_*.json
+*.log
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Archivos temporales
+*.tmp
+*.bak
+~$*
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user

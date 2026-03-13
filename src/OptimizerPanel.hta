@@ -24,7 +24,8 @@
             background: #030a12;
             color: #f4f4f5;
             padding: 24px;
-            width: 520px;
+            max-width: 520px;
+            margin: 0 auto;
         }
         h1 { text-align:center; font-size:26px; font-weight:900; margin-bottom:4px; letter-spacing:0.5px; background:linear-gradient(135deg, #fff 0%, #AEE2F9 40%, #55CDF5 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .subtitle { text-align:center; color:rgba(255, 255, 255, 0.55); margin-bottom:20px; font-size:13px; font-weight:300; }
@@ -319,9 +320,24 @@
                     WshShell.Run("cmd /c start \"\" cmd /c \"title ApliArteZenDash - Actualizaciones & echo === Actualizando Apps === & echo. & winget upgrade --all --silent --accept-source-agreements --accept-package-agreements & echo. & echo Proceso completado. & pause\"", 1, false);
                     SetStatus("Actualizaciones ejecutándose en una nueva consola...");
                 } else {
-                    SetStatus("<span style='color:#ef4444'>Error: winget no detectado. Instala App Installer en la Microsoft Store.</span>");
+                    var msg = "<span style='color:#f59e0b; font-size: 13px;'><b>Aviso:</b> Es necesario instalar 'App Installer' (Winget) para poder actualizar tus programas.</span><br><br>";
+                    msg += "<button class='btn-confirm' style='width:auto; padding:8px 16px; font-size:12px;' onclick='InstallWinget()'>📥 Instalar App Installer</button>";
+                    SetStatus(msg);
                 }
             }, 50);
+        }
+
+        function InstallWinget() {
+            SetStatus("Descargando e instalando Winget mediante PowerShell... Revisa la nueva consola emergente.");
+            var psCode = "Write-Host 'Descargando Winget (App Installer) desde servidores de Microsoft...' -ForegroundColor Cyan;";
+            psCode += " $url='https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle';";
+            psCode += " $tmp = $env:TEMP + '\\winget.msixbundle';";
+            psCode += " Invoke-WebRequest -Uri $url -OutFile $tmp;";
+            psCode += " Write-Host 'Instalando paquete en Windows de forma silenciosa...' -ForegroundColor Yellow;";
+            psCode += " Add-AppxPackage -Path $tmp;";
+            psCode += " Write-Host '¡Instalación completada! Ya puedes cerrar esta ventana.' -ForegroundColor Green;";
+            psCode += " Start-Sleep -s 5;";
+            WshShell.Run("cmd /c start \"Instalador Winget\" powershell -NoProfile -ExecutionPolicy Bypass -Command \"" + psCode + "\"", 1, false);
         }
         
         function InitState() {
@@ -351,6 +367,8 @@
         }
 
         window.onload = function() {
+            window.resizeTo(580, 880);
+            window.moveTo((screen.width - 580) / 2, (screen.height - 880) / 2);
             InitState();
         };
     </script>
