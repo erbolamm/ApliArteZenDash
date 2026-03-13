@@ -6,14 +6,6 @@ Un panel de control ligero y eficiente creado en formato **HTA** para optimizar 
 
 ![ApliArte ZenDash Logo](docs/assets/logo.webp)
 
-## 💖 Apoya el Proyecto
-
-Si esta herramienta te ahorra tiempo y te es útil, considera apoyar su desarrollo:
-
-- **PayPal**: [paypal.me/erbolamm](https://www.paypal.com/paypalme/erbolamm)
-- **Twitch (Tips)**: [StreamElements Tip](https://streamelements.com/apliarte/tip)
-- **Ko-fi**: [![Buy Me a Coffee at ko-fi.com](https://storage.ko-fi.com/cdn/kofi5.png?v=6)](https://ko-fi.com/C0C11TWR1K)
-
 ## 🛠️ Funciones Principales
 
 - **Streaming Mode**: Cierra procesos en segundo plano (Dropbox, OneDrive, Spotify, etc.) para liberar ancho de banda y CPU para OBS.
@@ -33,11 +25,39 @@ Si esta herramienta te ahorra tiempo y te es útil, considera apoyar su desarrol
 2. Haz doble clic en `OptimizerPanel.hta` (no requiere instalación).
 3. ¡Haz clic en la acción que necesites!
 
-## 🛡️ Licencia
+## Autor
 
-© 2026 ApliArte. Todos los derechos reservados.
-Este proyecto es de código abierto bajo la licencia MIT. ¡Siéntete libre de mejorar el código!
+Javier Mateo (ApliArte) — [github.com/erbolamm](https://github.com/erbolamm)
 
----
-**Hecho con ❤️ por ApliArte**  
-*Optimizado para sistemas con recursos moderados.*
+## 💬 Una nota personal del autor / A personal note from the author
+
+ℹ️ Nota: El texto siguiente es un mensaje personal del autor, escrito en varios idiomas para que pueda leerlo gente de todo el mundo. Esto no significa que el corrector funcione en esos idiomas — el motor de corrección es exclusivamente para español.
+
+ℹ️ Note: The text below is a personal message from the author, written in several languages so people around the world can read it. This does not mean the corrector works in those languages — the correction engine is exclusively for Spanish.
+
+🇪🇸 Español  
+🇬🇧 English  
+🇧🇷 Português  
+🇫🇷 Français  
+🇩🇪 Deutsch  
+🇮🇹 Italiano
+
+## 💖 Apoya el proyecto
+
+Herramienta gratuita y open source. Si te ahorra tiempo, un café ayuda a mantener el desarrollo.
+
+| Plataforma | Enlace |
+| --- | --- |
+| PayPal | [paypal.me/erbolamm](https://paypal.me/erbolamm) |
+| Ko-fi | [ko-fi.com/C0C11TWR1K](https://ko-fi.com/C0C11TWR1K) |
+| Twitch Tip | [streamelements.com/apliarte/tip](https://streamelements.com/apliarte/tip) |
+
+🌐 [Sitio Oficial](https://erbolamm.github.io/ApliArteZenDash/) · 📦 [GitHub](https://github.com/erbolamm/ApliArteZenDash)
+
+## Licencia
+
+MIT — © 2026 ApliArte
+
+## About
+
+Panel HTA de escritorio superligero para Windows que escanea y optimiza el rendimiento interactivamente para entornos de Streaming y Gaming.
