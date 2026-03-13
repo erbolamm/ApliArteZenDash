@@ -28,6 +28,7 @@ Hoja de ruta detallada para escalar el proyecto de un script HTA personal a una 
 - **Regeneración de Memoria Automática (`[GC]::Collect()` programado):** Ejecutar mini-procesos programados por detrás cada X horas.
 
 ## 📍 Fase 5: Transparencia y Salto Tecnológico (Futuro)
-*Objetivo: Superar las estrictas limitaciones técnicas del motor MSHTML de los HTA convencionales.*
-- **Migración Arquitectónica:** Cuando el proyecto gane estrellas en GitHub, portar la lógica a capas modernas como *Tauri* (que pesa poquísimos MB) o *Electron/C# WinForms*. 
-- **Ventajas:** Esto dará acceso a una interactividad del 2026 nativa, renderizado con motor WebKit/Blink (permitiendo transiciones de hardware fluidas) y total compatibilidad libre de la temida alerta eventual de Windows Defender al ejecutar macros HTA no firmadas.
+*Objetivo: Superar las estrictas limitaciones técnicas del motor MSHTML de los HTA convencionales y publicar en la Microsoft Store.*
+- **Migración Arquitectónica a Tauri + Rust:** Cuando el proyecto madure en GitHub, portar la lógica actual a **Tauri**. Esto permite usar tecnologías web modernas (HTML/CSS/JS fluidos) para la interfaz, mientras el backend en **Rust** ejecuta las operaciones críticas del sistema de forma ultrarrápida, hiperligera (pesando apenas unos pocos MB de RAM, ideal para una app de optimización) y con permisos nativos reales.
+- **Empaquetado e Identidad con WinAppCli:** Una vez en Tauri, el objetivo es utilizar la herramienta oficial de Microsoft (`microsoft/winappCli`) para generar la Identidad del Paquete y compilar nuestro ejecutable `.msix`.
+- **Ventajas Definitivas:** Esto dará acceso a notificaciones nativas de Windows 11 reales, actualizaciones limpias, total compatibilidad libre de la temida alerta eventual de Windows Defender (al estar firmada) y, lo más importante: **permitirá publicar ApliArte ZenDash de forma fácil oficial en la Microsoft Store** llegando a infinitos más streamers.
